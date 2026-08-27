@@ -1,16 +1,18 @@
 #version 120
 
 uniform sampler2D colortex0;
-uniform float BRIGHTNESS;
-uniform float SATURATION;
-uniform float CONTRAST;
 varying vec2 texcoord;
+
+// Iris shader-pack options. These appear in Shader Pack Settings.
+const float BRIGHTNESS = 0.72; // [0.45 0.55 0.65 0.72 0.80 0.90 1.00]
+const float SATURATION = 1.03; // [0.85 0.95 1.00 1.03 1.10]
+const float CONTRAST = 0.96;   // [0.85 0.90 0.96 1.00 1.05]
 
 void main() {
     vec3 color = texture2D(colortex0, texcoord).rgb;
 
-    // Keep the final image in a safe SDR range. No HDR tonemap that can wash
-    // the whole frame to white on Intel integrated graphics.
+    // Keep the final image in a safe SDR range. Do not use the previous
+    // HDR-style color/(1+color) operation, which caused the white wash.
     color *= BRIGHTNESS;
 
     float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
